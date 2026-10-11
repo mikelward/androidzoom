@@ -1,0 +1,102 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.mikelward.androidzoom",
+    "module": "zoom-core",
+    "version": "1.0.2",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.7.0"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.4.20"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "zoom-core-1.0.2.jar",
+          "url": "zoom-core-1.0.2.jar",
+          "size": 3949,
+          "sha512": "ae2c4d2b8f68e33a244e18e695b99a0135fb5abec29a4cb46cd02370288ee8a33f54ded87eca4eb49d95ecb562468f8a27584d2cc3f257c64a87b75f1e81578b",
+          "sha256": "de25f94b0d2ce90b8fd53c600f08a0f172c4967da609897bff073d7c32595ddb",
+          "sha1": "1e36b80d5812e1e9e6048b3523aff7aac466dee4",
+          "md5": "bd5df5ca2ee847ea9ff93f460321076b"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.jvm.version": 17,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.4.20"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "zoom-core-1.0.2.jar",
+          "url": "zoom-core-1.0.2.jar",
+          "size": 3949,
+          "sha512": "ae2c4d2b8f68e33a244e18e695b99a0135fb5abec29a4cb46cd02370288ee8a33f54ded87eca4eb49d95ecb562468f8a27584d2cc3f257c64a87b75f1e81578b",
+          "sha256": "de25f94b0d2ce90b8fd53c600f08a0f172c4967da609897bff073d7c32595ddb",
+          "sha1": "1e36b80d5812e1e9e6048b3523aff7aac466dee4",
+          "md5": "bd5df5ca2ee847ea9ff93f460321076b"
+        }
+      ]
+    },
+    {
+      "name": "sourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "zoom-core-1.0.2-sources.jar",
+          "url": "zoom-core-1.0.2-sources.jar",
+          "size": 3350,
+          "sha512": "017029a28eaf7b74c96c7b18deffdd8ebc7aa263de1b4d9b5072b018a0e94582cabfb769f0aeafcbe5046ca71c004c7684a72440df4e00194d2881880fa0a913",
+          "sha256": "db37099667b2587a46bc024795aceaa5cc6559808d4306083e4fb2a1c6a7df6b",
+          "sha1": "bebc5cbeb6eddf72acc897501172b0a8802ac5df",
+          "md5": "f3fa97abde453118d0b82323b37ac6ab"
+        }
+      ]
+    }
+  ]
+}
