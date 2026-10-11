@@ -1,0 +1,26 @@
+# Held in step with the consumer fleet (clothescast, snoozemo, stopdash, simmo)
+# rather than moved independently: a consumer working on this library and an
+# app together puts both builds' AGP and Kotlin in one Gradle invocation, and
+# AGP refuses to compare two versions at all. See AGENTS.md.
+[versions]
+activity = "1.13.0"
+agp = "9.4.1"
+composeBom = "2026.09.00"
+junit = "4.13.2"
+kotlin = "2.4.20"
+robolectric = "4.17"
+
+[libraries]
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

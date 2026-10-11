@@ -1,0 +1,164 @@
+name: ci
+
+# Consumers reference this build at `@main` -- no tag, no SHA, deliberately,
+# since bumping a pin in four apps is the cost centralizing was meant to
+# remove. So this suite runs on the pull request, which is the only gate
+# between a change and every consumer's next build: there is no release step
+# afterwards to catch anything. The `push` run below re-checks the commit the
+# merge produced.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    # No paths filter, deliberately: the ruleset requires the `lanes` check,
+    # and a required check that never reports blocks the pull request forever
+    # -- which is exactly what a path-filtered-out workflow produces.
+    # Housekeeping-only pull requests skip the heavy job via `classify`
+    # instead, and `lanes` verifies the skip was justified.
+    #
+    # `edited` is load-bearing, not tidiness: a retarget changes what the
+    # pull request's diff is measured against while the head -- and any
+    # `lanes` check run already minted on it -- stays put, so a base change
+    # must start a fresh run. Title and body edits re-run the lane too,
+    # deliberately: a skipped job would be worse, because GitHub counts a
+    # skipped required check as satisfied, so skipping the gate on a
+    # "harmless" edit would let a newer skipped run replace a red verdict on
+    # the same head.
+    types: [opened, synchronize, reopened, edited]
+
+# Nothing here writes to the repository. The docs lane's classify and lanes
+# jobs read the pull request's files and commits through the workflow token;
+# read-only, and still nothing here can write.
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  # Decides whether the check job may skip: true only when every changed file
+  # in the pull request is housekeeping (markdown outside the module trees --
+  # see .github/lanes.conf for the rules; the engine is mikelward/lanes).
+  # Pushes to main are always classified as code.
+  classify:
+    name: Classify the diff
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      docs_only: ${{ steps.lane.outputs.docs_only }}
+      base_sha: ${{ steps.lane.outputs.base_sha }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: mikelward/lanes@main
+        id: lane
+        with:
+          mode: classify
+          pr: ${{ github.event.pull_request.number }}
+
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: classify
+    if: needs.classify.outputs.docs_only != 'true'
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # The published version's patch level is the commit count, and the
+          # step that verifies that derivation needs real history to build its
+          # complete-checkout case from -- the default depth-1 checkout is
+          # exactly the shallow clone it exists to catch.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@4c125117fe7c5aed11272ec4213f602f012f89f2  # v5
+
+      # `check`, not `test`: it also runs :zoom-core:verifyNoAndroid, which
+      # is what actually holds the JVM/Android seam. The tests would stay green
+      # without it -- this runner has an Android SDK.
+      - run: ./gradlew check --stacktrace
+
+      # The second entry point (`zoom-core/settings.gradle.kts`), which the
+      # consumers' Google-Maven-unreachable offramp builds include instead of
+      # the root. It is only worth having if it stays Android-free, and nothing
+      # else here would notice it regressing: the root build resolves AGP
+      # happily on this runner, so `check` above passes either way.
+      #
+      # Running it from `zoom-core/` is what proves the isolation -- this
+      # build has no `google()` in `pluginManagement`, so an Android plugin
+      # creeping onto the path fails here rather than silently resolving.
+      - name: Check the Android-free entry point
+        working-directory: zoom-core
+        run: ../gradlew test --stacktrace
+
+      # The version derivation and its publish refusals, which no unit test can
+      # reach: the cases ARE git checkouts on disk (a shallow clone, and a tree
+      # with no `.git` inside another repository). Runs after `check` so the
+      # Gradle caches are warm; about ten seconds locally.
+      - name: Verify the version derivation
+        run: ./scripts/verify-version-derivation.sh
+
+      # The merge guard the release workflow's committing job runs. Pure shell
+      # over two directory trees, so it needs nothing from Gradle and runs in
+      # under a second.
+      - name: Verify the Maven merge guard
+        run: ./scripts/merge-maven-tree-test.sh
+
+      # A guard against a *false pass* cannot be proven by a passing run. The
+      # version this check replaced -- ported from snoozemo, where it had been
+      # enforcing nothing -- went green with an androidx dependency present,
+      # because it read resolved artifacts through a lenient view and an AAR
+      # cannot resolve in a JVM module.
+      #
+      # So the failing direction is checked too: the same task, the same
+      # module, a real Android dependency injected, required to fail *and* to
+      # name what it found. A failure for any other reason would be its own
+      # false pass.
+      - name: Prove that guard actually fails
+        run: |
+          set +e
+          output=$(./gradlew :zoom-core:verifyNoAndroid -PverifyNoAndroidSelfTest 2>&1)
+          status=$?
+          set -e
+          echo "$output"
+          if [ "$status" -eq 0 ]; then
+            echo "::error::verifyNoAndroid passed with an Android dependency present, so it proves nothing."
+            exit 1
+          fi
+          if ! printf '%s' "$output" | grep -q 'androidx.core:core-ktx'; then
+            echo "::error::verifyNoAndroid failed, but without naming the injected dependency."
+            exit 1
+          fi
+
+  # The one check the ruleset requires from this workflow (alongside `codex`
+  # and `zizmor`). Always runs, always reports -- green only when the check
+  # job succeeded, or when it was skipped and the skip is INDEPENDENTLY
+  # verified as justified: the gate re-derives the classification itself
+  # rather than trusting classify's output. Any other combination is an
+  # explicit red, never a silent pass. Named `lanes` from the start -- this
+  # repository adopts the engine after mikelward/lanes#9's check rename, so it
+  # never carries the `gate` name its siblings are still migrating away from.
+  lanes:
+    name: lanes
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [classify, check]
+    if: always()
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: mikelward/lanes@main
+        with:
+          mode: gate
+          pr: ${{ github.event.pull_request.number }}
+          # Only read on a dispatched run, and harmless on a pull_request one,
+          # which takes the same commit from its own event payload.
+          base-sha: ${{ needs.classify.outputs.base_sha }}
+          classify-result: ${{ needs.classify.result }}
+          results: >-
+            check=${{ needs.check.result }}
