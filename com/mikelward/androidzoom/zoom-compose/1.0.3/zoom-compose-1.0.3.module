@@ -1,0 +1,132 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.mikelward.androidzoom",
+    "module": "zoom-compose",
+    "version": "1.0.3",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.7.0"
+    }
+  },
+  "variants": [
+    {
+      "name": "releaseVariantReleaseApiPublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "com.mikelward.androidzoom",
+          "module": "zoom-core",
+          "version": {
+            "requires": "1.0.3"
+          }
+        },
+        {
+          "group": "androidx.compose.ui",
+          "module": "ui"
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.4.20"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "zoom-compose-1.0.3.aar",
+          "url": "zoom-compose-1.0.3.aar",
+          "size": 30218,
+          "sha512": "178f3ca777f961edc1d4f0a235ae6415fd5b416aaf4de20671b70ec81acf9c52264747f4d6a0b7b5190b0ee44d734d8fc0ce73678e3f372a9114196540f1b0c7",
+          "sha256": "503b6e44d306628494b2675fe104cc45efcb1c64d29bcaeac24b717c30c7ea88",
+          "sha1": "63ca30a57df8ee5a8f79774898f4ccf8409f4e09",
+          "md5": "3bf596497e3ffc861af38916f34611c2"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseRuntimePublication",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.libraryelements": "aar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "androidx.compose",
+          "module": "compose-bom",
+          "version": {
+            "requires": "2026.09.00"
+          },
+          "attributes": {
+            "org.gradle.category": "platform"
+          }
+        },
+        {
+          "group": "androidx.compose.foundation",
+          "module": "foundation"
+        },
+        {
+          "group": "com.mikelward.androidzoom",
+          "module": "zoom-core",
+          "version": {
+            "requires": "1.0.3"
+          }
+        },
+        {
+          "group": "androidx.compose.ui",
+          "module": "ui"
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.4.20"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "zoom-compose-1.0.3.aar",
+          "url": "zoom-compose-1.0.3.aar",
+          "size": 30218,
+          "sha512": "178f3ca777f961edc1d4f0a235ae6415fd5b416aaf4de20671b70ec81acf9c52264747f4d6a0b7b5190b0ee44d734d8fc0ce73678e3f372a9114196540f1b0c7",
+          "sha256": "503b6e44d306628494b2675fe104cc45efcb1c64d29bcaeac24b717c30c7ea88",
+          "sha1": "63ca30a57df8ee5a8f79774898f4ccf8409f4e09",
+          "md5": "3bf596497e3ffc861af38916f34611c2"
+        }
+      ]
+    },
+    {
+      "name": "releaseVariantReleaseSourcePublication",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.usage": "java-runtime"
+      },
+      "files": [
+        {
+          "name": "zoom-compose-1.0.3-sources.jar",
+          "url": "zoom-compose-1.0.3-sources.jar",
+          "size": 8264,
+          "sha512": "d95a69307dbbb42a60af02fff172f2fd7a702497fcf3d296c3b1eaa80b6df85e3cfea9afbe6a69eb215df8b9a6ec0539175888a6158831a452e1f61c258f7185",
+          "sha256": "7c1c5542eb5394fbadecbba7920ed35a8a9bda386d78ca073d7fa4c59294f4b9",
+          "sha1": "fddfcc864672b6fd4f7ab3a3745dde289956838d",
+          "md5": "098ca270612c9516978614da21404f90"
+        }
+      ]
+    }
+  ]
+}
